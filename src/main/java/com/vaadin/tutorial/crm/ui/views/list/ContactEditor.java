@@ -20,7 +20,7 @@ import com.vaadin.tutorial.crm.backend.entity.Contact;
 
 import java.util.List;
 
-public class ContactForm extends FormLayout {
+public class ContactEditor extends FormLayout {
 
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
@@ -35,7 +35,7 @@ public class ContactForm extends FormLayout {
     Binder<Contact> binder = new BeanValidationBinder<>(Contact.class);
     private Contact contact;
 
-    public ContactForm(List<Company> companies) {
+    public ContactEditor(List<Company> companies) {
         addClassName("contact-form");
 
         binder.bindInstanceFields(this);
@@ -68,7 +68,7 @@ public class ContactForm extends FormLayout {
 
         save.addClickListener(click -> validateAndSave());
         delete.addClickListener(click -> fireEvent(new DeleteEvent(this, contact)));
-        close.addClickListener(click -> fireEvent(new CloseEvent(this)));
+        close.addClickListener(click -> fireEvent(new CloseEvent(this, contact)));
 
         binder.addStatusChangeListener(evt -> save.setEnabled(binder.isValid()));
 
@@ -86,10 +86,10 @@ public class ContactForm extends FormLayout {
     }
 
     // Events
-    public static abstract class ContactFormEvent extends ComponentEvent<ContactForm> {
+    public static abstract class ContactFormEvent extends ComponentEvent<ContactEditor> {
       private Contact contact;
 
-      protected ContactFormEvent(ContactForm source, Contact contact) {
+      protected ContactFormEvent(ContactEditor source, Contact contact) {
         super(source, false);
         this.contact = contact;
       }
@@ -100,21 +100,21 @@ public class ContactForm extends FormLayout {
     }
 
     public static class SaveEvent extends ContactFormEvent {
-      SaveEvent(ContactForm source, Contact contact) {
+      SaveEvent(ContactEditor source, Contact contact) {
         super(source, contact);
       }
     }
 
     public static class DeleteEvent extends ContactFormEvent {
-      DeleteEvent(ContactForm source, Contact contact) {
+      DeleteEvent(ContactEditor source, Contact contact) {
         super(source, contact);
       }
 
     }
 
     public static class CloseEvent extends ContactFormEvent {
-      CloseEvent(ContactForm source) {
-        super(source, null);
+      CloseEvent(ContactEditor source, Contact contact) {
+        super(source, contact);
       }
     }
 

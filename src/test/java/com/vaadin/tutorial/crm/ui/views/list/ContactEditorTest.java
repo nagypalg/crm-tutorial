@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ContactFormTest {
+public class ContactEditorTest {
     private List<Company> companies;
     private Contact marcUsher;
     private Company company1;
@@ -34,7 +34,7 @@ public class ContactFormTest {
 
     @Test
     public void formFieldsPopulated() {
-        ContactForm form = new ContactForm(companies);
+        ContactEditor form = new ContactEditor(companies);
         form.setContact(marcUsher);
         Assert.assertEquals("Marc", form.firstName.getValue());
         Assert.assertEquals("Usher", form.lastName.getValue());
@@ -45,7 +45,7 @@ public class ContactFormTest {
 
     @Test
         public void saveEventHasCorrectValues() {
-            ContactForm form = new ContactForm(companies);
+            ContactEditor form = new ContactEditor(companies);
             Contact contact = new Contact();
             form.setContact(contact);
 
@@ -56,7 +56,7 @@ public class ContactFormTest {
             form.status.setValue(Contact.Status.Customer);
 
             AtomicReference<Contact> savedContactRef = new AtomicReference<>(null);
-            form.addListener(ContactForm.SaveEvent.class, e -> {
+            form.addListener(ContactEditor.SaveEvent.class, e -> {
                 savedContactRef.set(e.getContact());
             });
             form.save.click();

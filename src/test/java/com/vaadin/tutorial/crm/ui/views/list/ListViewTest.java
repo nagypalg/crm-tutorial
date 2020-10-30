@@ -22,7 +22,7 @@ public class ListViewTest {
             Grid<Contact> grid = listView.grid;
             Contact firstContact = getFirstItem(grid);
 
-            ContactForm form = listView.form;
+            ContactEditor form = listView.editor;
 
             Assert.assertFalse(form.isVisible());
     		grid.asSingleSelect().setValue(firstContact);

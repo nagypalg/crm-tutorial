@@ -23,7 +23,8 @@ import org.springframework.stereotype.Component;
 @PageTitle("Contacts | Vaadin CRM")
 public class ListView extends VerticalLayout {
 
-    ContactForm form;
+    ContactEditor editor;
+    ContactViewer viewer;
     Grid<Contact> grid = new Grid<>(Contact.class);
     TextField filterText = new TextField();
 
@@ -37,27 +38,45 @@ public class ListView extends VerticalLayout {
         configureGrid();
 
 
-        form = new ContactForm(companyService.findAll());
-        form.addListener(ContactForm.SaveEvent.class, this::saveContact);
-        form.addListener(ContactForm.DeleteEvent.class, this::deleteContact);
-        form.addListener(ContactForm.CloseEvent.class, e -> closeEditor());
+        editor = new ContactEditor(companyService.findAll());
+        editor.addListener(ContactEditor.SaveEvent.class, e -> {
+            saveContact(e);
+            grid.select(e.getContact());
+            viewContact(e.getContact());
+        });
+        editor.addListener(ContactEditor.DeleteEvent.class, this::deleteContact);
+        editor.addListener(ContactEditor.CloseEvent.class, e -> {
+            closeEditor();
+            viewContact(e.getContact());
+        });
 
-        Div content = new Div(grid, form);
+        viewer = new ContactViewer();
+        viewer.addListener(ContactViewer.EditEvent.class, e -> {
+            editContact(e.getContact());
+            closeViewer();
+        });
+        viewer.addListener(ContactViewer.CloseEvent.class, e -> {
+            closeViewer();
+            grid.asSingleSelect().clear();
+        });
+
+        Div content = new Div(grid, viewer, editor);
         content.addClassName("content");
         content.setSizeFull();
 
         add(getToolBar(), content);
         updateList();
         closeEditor();
+        closeViewer();
     }
 
-    private void deleteContact(ContactForm.DeleteEvent evt) {
+    private void deleteContact(ContactEditor.DeleteEvent evt) {
         contactService.delete(evt.getContact());
         updateList();
         closeEditor();
     }
 
-    private void saveContact(ContactForm.SaveEvent evt) {
+    private void saveContact(ContactEditor.SaveEvent evt) {
         contactService.save(evt.getContact());
         updateList();
         closeEditor();
@@ -87,29 +106,46 @@ public class ListView extends VerticalLayout {
         grid.removeColumnByKey("company");
         grid.setColumns("firstName", "lastName", "email", "status");
         grid.addColumn(contact -> {
-           Company company = contact.getCompany();
-           return company == null ? "-" : company.getName();
+            Company company = contact.getCompany();
+            return company == null ? "-" : company.getName();
         }).setHeader("Company");
 
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
-        grid.asSingleSelect().addValueChangeListener(evt -> editContact(evt.getValue()));
+        grid.asSingleSelect().addValueChangeListener(evt -> viewContact(evt.getValue()));
+    }
+
+    private void viewContact(Contact contact) {
+        if (contact == null) {
+            closeViewer();
+        } else {
+            viewer.setContact(contact);
+            viewer.setVisible(true);
+            addClassName("viewing");
+        }
     }
 
     private void editContact(Contact contact) {
         if (contact == null) {
             closeEditor();
         } else {
-            form.setContact(contact);
-            form.setVisible(true);
+            editor.setContact(contact);
+            editor.setVisible(true);
             addClassName("editing");
         }
     }
 
     private void closeEditor() {
-        form.setContact(null);
-        form.setVisible(false);
+        editor.setContact(null);
+        editor.setVisible(false);
         removeClassName("editing");
+    }
+
+    private void closeViewer() {
+        viewer.setContact(null);
+        viewer.setVisible(false);
+        removeClassName("viewing");
+
     }
 
     private void updateList() {
