@@ -20,11 +20,11 @@ a[highlight] {
     display: flex;
 }
 
-.list-view .contact-grid {
+.list-view .item-grid {
     flex: 2;
 }
 
-.list-view .contact-form {
+.list-view .item-form {
     flex: 1;
     padding: var(--lumo-space-m);
 }

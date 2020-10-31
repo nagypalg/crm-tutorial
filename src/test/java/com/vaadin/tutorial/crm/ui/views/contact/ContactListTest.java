@@ -1,4 +1,4 @@
-package com.vaadin.tutorial.crm.ui.views.list;
+package com.vaadin.tutorial.crm.ui.views.contact;
 
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -12,10 +12,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ListViewTest {
+public class ContactListTest {
 
     @Autowired
-    private ListView listView;
+    private ContactList listView;
 
     @Test
         public void formShownWhenContactSelected() {

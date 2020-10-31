@@ -11,8 +11,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
+import com.vaadin.tutorial.crm.ui.views.company.CompanyList;
 import com.vaadin.tutorial.crm.ui.views.dashboard.DashboardView;
-import com.vaadin.tutorial.crm.ui.views.list.ListView;
+import com.vaadin.tutorial.crm.ui.views.contact.ContactList;
 
 @PWA(
     name = "Vaadin CRM",
@@ -47,12 +48,14 @@ public class MainLayout extends AppLayout {
     }
 
     private void createDrawer() {
-        RouterLink listLink = new RouterLink("List", ListView.class);
-        listLink.setHighlightCondition(HighlightConditions.sameLocation());
+        RouterLink contactsLink = new RouterLink("Contacts", ContactList.class);
+        contactsLink.setHighlightCondition(HighlightConditions.sameLocation());
+
+        RouterLink companiesLink = new RouterLink("Companies", CompanyList.class);
+        companiesLink.setHighlightCondition(HighlightConditions.sameLocation());
 
         addToDrawer(new VerticalLayout(
-            listLink,
-            new RouterLink("Dashboard", DashboardView.class)
+            contactsLink, companiesLink
         ));
     }
 

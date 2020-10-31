@@ -1,22 +1,17 @@
-package com.vaadin.tutorial.crm.ui.views.list;
+package com.vaadin.tutorial.crm.ui.views.contact;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.tutorial.crm.backend.entity.Company;
 import com.vaadin.tutorial.crm.backend.entity.Contact;
-
-import java.util.List;
 
 public class ContactViewer extends FormLayout {
 
@@ -29,11 +24,14 @@ public class ContactViewer extends FormLayout {
     Button edit = new Button("Edit");
     Button close = new Button("Close");
 
-    Binder<Contact> binder = new BeanValidationBinder<>(Contact.class);
+    Binder<Contact> binder = new Binder<>(Contact.class);
     private Contact contact;
+    private ShortcutRegistration enterRegistration;
+    private ShortcutRegistration escapeRegistration;
+    private boolean ignoreFirstKeyEvent;
 
     public ContactViewer() {
-        addClassName("contact-form");
+        addClassName("item-form");
 
         binder.forField(company).bind(c -> {
             Company company = c.getCompany();
@@ -62,19 +60,55 @@ public class ContactViewer extends FormLayout {
     public void setContact(Contact contact) {
         this.contact = contact;
         binder.readBean(contact);
+//        if (contact != null) {
+//            enterRegistration = edit.addClickShortcut(Key.ENTER);
+//            escapeRegistration = close.addClickShortcut(Key.ESCAPE);
+//        } else if (enterRegistration != null){
+////            enterRegistration.remove();
+////            escapeRegistration.remove();
+//        }
+    }
+
+    public void ignoreFirstKeyEvent() {
+        this.ignoreFirstKeyEvent = true;
     }
 
     private Component createButtonsLayout() {
         edit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-
-        edit.addClickShortcut(Key.ENTER);
-        close.addClickShortcut(Key.ESCAPE);
-
         edit.addClickListener(click -> fireEvent(new EditEvent(this, contact)));
         close.addClickListener(click -> fireEvent(new CloseEvent(this)));
 
-        return new HorizontalLayout(edit, close);
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(edit, close);
+//        edit.addClickShortcut(Key.ENTER).bindLifecycleTo(buttonsLayout);
+//        close.addClickShortcut(Key.ESCAPE).bindLifecycleTo(buttonsLayout);
+
+        Shortcuts.addShortcutListener(this,
+                () -> Notification.show("Well done viewer!"),
+                Key.KEY_G, KeyModifier.ALT);
+
+        Shortcuts.addShortcutListener(this,
+                () -> {
+                    if (!ignoreFirstKeyEvent) {
+                        Notification.show("Enter in viewer");
+                        edit.click();
+                    }
+                    ignoreFirstKeyEvent = false;
+                },
+                Key.ENTER);
+
+        Shortcuts.addShortcutListener(this,
+                () -> {
+                    if (!ignoreFirstKeyEvent) {
+                        Notification.show("Escape in viewer");
+                        close.click();
+                    }
+                    ignoreFirstKeyEvent = false;
+                },
+                Key.ESCAPE);
+
+        return buttonsLayout;
     }
 
     // Events
@@ -107,4 +141,6 @@ public class ContactViewer extends FormLayout {
                                                                   ComponentEventListener<T> listener) {
         return getEventBus().addListener(eventType, listener);
     }
+
+
 }

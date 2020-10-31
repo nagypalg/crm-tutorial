@@ -1,4 +1,4 @@
-package com.vaadin.tutorial.crm.ui.views.list;
+package com.vaadin.tutorial.crm.ui.views.contact;
 
 import com.vaadin.tutorial.crm.backend.entity.Company;
 import com.vaadin.tutorial.crm.backend.entity.Contact;

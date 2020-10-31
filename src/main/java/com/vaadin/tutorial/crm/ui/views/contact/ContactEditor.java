@@ -1,13 +1,11 @@
-package com.vaadin.tutorial.crm.ui.views.list;
+package com.vaadin.tutorial.crm.ui.views.contact;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -17,9 +15,11 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.tutorial.crm.backend.entity.Company;
 import com.vaadin.tutorial.crm.backend.entity.Contact;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 public class ContactEditor extends FormLayout {
 
     TextField firstName = new TextField("First name");
@@ -32,11 +32,14 @@ public class ContactEditor extends FormLayout {
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
+    private ShortcutRegistration enterRegistration;
+    private ShortcutRegistration escapeRegistration;
+
     Binder<Contact> binder = new BeanValidationBinder<>(Contact.class);
     private Contact contact;
 
     public ContactEditor(List<Company> companies) {
-        addClassName("contact-form");
+        addClassName("item-form");
 
         binder.bindInstanceFields(this);
         status.setItems(Contact.Status.values());
@@ -44,18 +47,26 @@ public class ContactEditor extends FormLayout {
         company.setItemLabelGenerator(Company::getName);
 
         add(
-            firstName,
-            lastName,
-            email,
-            status,
-            company,
-            createButtonsLayout()
+                firstName,
+                lastName,
+                email,
+                status,
+                company,
+                createButtonsLayout()
         );
     }
 
     public void setContact(Contact contact) {
         this.contact = contact;
         binder.readBean(contact);
+//        if (contact != null) {
+//            log.info("Adding shortcut listeners");
+//            enterRegistration = save.addClickShortcut(Key.ENTER);
+//            escapeRegistration = close.addClickShortcut(Key.ESCAPE);
+//        } else if (enterRegistration != null){
+////            enterRegistration.remove();
+////            escapeRegistration.remove();
+//        }
     }
 
     private Component createButtonsLayout() {
@@ -63,63 +74,81 @@ public class ContactEditor extends FormLayout {
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-        save.addClickShortcut(Key.ENTER);
-        close.addClickShortcut(Key.ESCAPE);
-
         save.addClickListener(click -> validateAndSave());
         delete.addClickListener(click -> fireEvent(new DeleteEvent(this, contact)));
         close.addClickListener(click -> fireEvent(new CloseEvent(this, contact)));
 
         binder.addStatusChangeListener(evt -> save.setEnabled(binder.isValid()));
 
-        return new HorizontalLayout(save, delete, close);
+        HorizontalLayout buttonsLayout = new HorizontalLayout(save, delete, close);
+//        save.addClickShortcut(Key.ENTER).bindLifecycleTo(buttonsLayout);
+//        close.addClickShortcut(Key.ESCAPE).bindLifecycleTo(buttonsLayout);
+
+        Shortcuts.addShortcutListener(this,
+                () -> Notification.show("Well done editor!"),
+                Key.KEY_G, KeyModifier.ALT);
+
+        Shortcuts.addShortcutListener(this,
+                () -> {
+                    Notification.show("Enter in editor");
+                    validateAndSave();
+                },
+                Key.ENTER);
+
+        Shortcuts.addShortcutListener(this,
+                () -> {
+                    Notification.show("Escape in editor");
+                    fireEvent(new CloseEvent(this, contact));
+                },
+                Key.ESCAPE);
+        return buttonsLayout;
     }
 
     private void validateAndSave() {
 
-      try {
-        binder.writeBean(contact);
-        fireEvent(new SaveEvent(this, contact));
-      } catch (ValidationException e) {
-        e.printStackTrace();
-      }
+        try {
+            binder.writeBean(contact);
+            fireEvent(new SaveEvent(this, contact));
+        } catch (ValidationException e) {
+            e.printStackTrace();
+        }
     }
 
     // Events
     public static abstract class ContactFormEvent extends ComponentEvent<ContactEditor> {
-      private Contact contact;
+        private Contact contact;
 
-      protected ContactFormEvent(ContactEditor source, Contact contact) {
-        super(source, false);
-        this.contact = contact;
-      }
+        protected ContactFormEvent(ContactEditor source, Contact contact) {
+            super(source, false);
+            this.contact = contact;
+        }
 
-      public Contact getContact() {
-        return contact;
-      }
+        public Contact getContact() {
+            return contact;
+        }
     }
 
     public static class SaveEvent extends ContactFormEvent {
-      SaveEvent(ContactEditor source, Contact contact) {
-        super(source, contact);
-      }
+        SaveEvent(ContactEditor source, Contact contact) {
+            super(source, contact);
+        }
     }
 
     public static class DeleteEvent extends ContactFormEvent {
-      DeleteEvent(ContactEditor source, Contact contact) {
-        super(source, contact);
-      }
+        DeleteEvent(ContactEditor source, Contact contact) {
+            super(source, contact);
+        }
 
     }
 
     public static class CloseEvent extends ContactFormEvent {
-      CloseEvent(ContactEditor source, Contact contact) {
-        super(source, contact);
-      }
+        CloseEvent(ContactEditor source, Contact contact) {
+            super(source, contact);
+        }
     }
 
     public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType,
                                                                   ComponentEventListener<T> listener) {
-      return getEventBus().addListener(eventType, listener);
+        return getEventBus().addListener(eventType, listener);
     }
 }
