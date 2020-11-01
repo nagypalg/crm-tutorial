@@ -45,14 +45,12 @@ public class ContactList extends VerticalLayout {
             Contact contact = e.getContact();
             log.info("Editor save triggered for {}", contact);
             saveContact(e);
-            viewer.ignoreFirstKeyEvent();
             reselectContact(contact);
         });
         editor.addListener(ContactEditor.DeleteEvent.class, this::deleteContact);
         editor.addListener(ContactEditor.CloseEvent.class, e -> {
             log.info("Editor close triggered");
             closeEditor();
-            viewer.ignoreFirstKeyEvent();
             reselectContact(e.getContact());
         });
 

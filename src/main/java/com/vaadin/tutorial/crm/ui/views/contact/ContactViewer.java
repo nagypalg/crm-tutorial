@@ -26,9 +26,6 @@ public class ContactViewer extends FormLayout {
 
     Binder<Contact> binder = new Binder<>(Contact.class);
     private Contact contact;
-    private ShortcutRegistration enterRegistration;
-    private ShortcutRegistration escapeRegistration;
-    private boolean ignoreFirstKeyEvent;
 
     public ContactViewer() {
         addClassName("item-form");
@@ -60,17 +57,6 @@ public class ContactViewer extends FormLayout {
     public void setContact(Contact contact) {
         this.contact = contact;
         binder.readBean(contact);
-//        if (contact != null) {
-//            enterRegistration = edit.addClickShortcut(Key.ENTER);
-//            escapeRegistration = close.addClickShortcut(Key.ESCAPE);
-//        } else if (enterRegistration != null){
-////            enterRegistration.remove();
-////            escapeRegistration.remove();
-//        }
-    }
-
-    public void ignoreFirstKeyEvent() {
-        this.ignoreFirstKeyEvent = true;
     }
 
     private Component createButtonsLayout() {
@@ -78,41 +64,8 @@ public class ContactViewer extends FormLayout {
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         edit.addClickListener(click -> fireEvent(new EditEvent(this, contact)));
         close.addClickListener(click -> fireEvent(new CloseEvent(this)));
+        return new HorizontalLayout(edit, close);
 
-
-        HorizontalLayout buttonsLayout = new HorizontalLayout(edit, close);
-//        edit.addClickShortcut(Key.ENTER).bindLifecycleTo(buttonsLayout);
-//        close.addClickShortcut(Key.ESCAPE).bindLifecycleTo(buttonsLayout);
-
-//        Shortcuts.addShortcutListener(this,
-//                () -> Notification.show("Well done viewer!"),
-//                Key.KEY_G, KeyModifier.ALT);
-
-        Shortcuts.addShortcutListener(this,
-                () -> {
-                    if (!ignoreFirstKeyEvent) {
-//                        Notification.show("Enter in viewer");
-                        edit.click();
-                    } else {
-//                        Notification.show("Enter ignored in viewer");
-                    }
-                    ignoreFirstKeyEvent = false;
-                },
-                Key.ENTER);
-
-        Shortcuts.addShortcutListener(this,
-                () -> {
-                    if (!ignoreFirstKeyEvent) {
-//                        Notification.show("Escape in viewer");
-                        close.click();
-                    } else {
-//                        Notification.show("Escape ignored in viewer");
-                    }
-                    ignoreFirstKeyEvent = false;
-                },
-                Key.ESCAPE);
-
-        return buttonsLayout;
     }
 
     // Events

@@ -45,9 +45,6 @@ public class CompanyViewer extends FormLayout {
         edit.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-        edit.addClickShortcut(Key.ENTER);
-        close.addClickShortcut(Key.ESCAPE);
-
         edit.addClickListener(click -> fireEvent(new EditEvent(this, company)));
         close.addClickListener(click -> fireEvent(new CloseEvent(this)));
 

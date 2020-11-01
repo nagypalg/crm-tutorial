@@ -32,9 +32,6 @@ public class ContactEditor extends FormLayout {
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
-    private ShortcutRegistration enterRegistration;
-    private ShortcutRegistration escapeRegistration;
-
     Binder<Contact> binder = new BeanValidationBinder<>(Contact.class);
     private Contact contact;
 
@@ -59,14 +56,6 @@ public class ContactEditor extends FormLayout {
     public void setContact(Contact contact) {
         this.contact = contact;
         binder.readBean(contact);
-//        if (contact != null) {
-//            log.info("Adding shortcut listeners");
-//            enterRegistration = save.addClickShortcut(Key.ENTER);
-//            escapeRegistration = close.addClickShortcut(Key.ESCAPE);
-//        } else if (enterRegistration != null){
-////            enterRegistration.remove();
-////            escapeRegistration.remove();
-//        }
     }
 
     private Component createButtonsLayout() {
@@ -80,22 +69,8 @@ public class ContactEditor extends FormLayout {
 
         binder.addStatusChangeListener(evt -> save.setEnabled(binder.isValid()));
 
-        HorizontalLayout buttonsLayout = new HorizontalLayout(save, delete, close);
+        return new HorizontalLayout(save, delete, close);
 
-        Shortcuts.addShortcutListener(this,
-                () -> {
-//                    Notification.show("Enter in editor");
-                    validateAndSave();
-                },
-                Key.ENTER);
-
-        Shortcuts.addShortcutListener(this,
-                () -> {
-//                    Notification.show("Escape in editor");
-                    close();
-                },
-                Key.ESCAPE);
-        return buttonsLayout;
     }
 
     private void close() {
