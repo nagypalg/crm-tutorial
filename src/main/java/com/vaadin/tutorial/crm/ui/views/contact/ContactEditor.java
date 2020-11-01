@@ -76,32 +76,30 @@ public class ContactEditor extends FormLayout {
 
         save.addClickListener(click -> validateAndSave());
         delete.addClickListener(click -> fireEvent(new DeleteEvent(this, contact)));
-        close.addClickListener(click -> fireEvent(new CloseEvent(this, contact)));
+        close.addClickListener(click -> close());
 
         binder.addStatusChangeListener(evt -> save.setEnabled(binder.isValid()));
 
         HorizontalLayout buttonsLayout = new HorizontalLayout(save, delete, close);
-//        save.addClickShortcut(Key.ENTER).bindLifecycleTo(buttonsLayout);
-//        close.addClickShortcut(Key.ESCAPE).bindLifecycleTo(buttonsLayout);
-
-        Shortcuts.addShortcutListener(this,
-                () -> Notification.show("Well done editor!"),
-                Key.KEY_G, KeyModifier.ALT);
 
         Shortcuts.addShortcutListener(this,
                 () -> {
-                    Notification.show("Enter in editor");
+//                    Notification.show("Enter in editor");
                     validateAndSave();
                 },
                 Key.ENTER);
 
         Shortcuts.addShortcutListener(this,
                 () -> {
-                    Notification.show("Escape in editor");
-                    fireEvent(new CloseEvent(this, contact));
+//                    Notification.show("Escape in editor");
+                    close();
                 },
                 Key.ESCAPE);
         return buttonsLayout;
+    }
+
+    private void close() {
+        fireEvent(new CloseEvent(this, contact));
     }
 
     private void validateAndSave() {

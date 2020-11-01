@@ -7,6 +7,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -39,33 +40,27 @@ public class ContactList extends VerticalLayout {
         addClassName("list-view");
         setSizeFull();
         configureGrid();
-
-
         editor = new ContactEditor(companyService.findAll());
         editor.addListener(ContactEditor.SaveEvent.class, e -> {
-            log.info("Editor save triggered");
+            Contact contact = e.getContact();
+            log.info("Editor save triggered for {}", contact);
             saveContact(e);
             viewer.ignoreFirstKeyEvent();
-            grid.asSingleSelect().clear();
-            grid.select(e.getContact());
-//            fireEvent(new ViewItemEvent(this, e.getContact()));
+            reselectContact(contact);
         });
         editor.addListener(ContactEditor.DeleteEvent.class, this::deleteContact);
         editor.addListener(ContactEditor.CloseEvent.class, e -> {
             log.info("Editor close triggered");
             closeEditor();
             viewer.ignoreFirstKeyEvent();
-//            fireEvent(new ViewItemEvent(this, e.getContact()));
-            grid.asSingleSelect().clear();
-            grid.select(e.getContact());
+            reselectContact(e.getContact());
         });
 
         viewer = new ContactViewer();
         viewer.addListener(ContactViewer.EditEvent.class, e -> {
             log.info("Viewer edit triggered");
             closeViewer();
-            fireEvent(new EditItemEvent(this, e.getContact()));
-//            editContact(e.getContact());
+            editContact(e.getContact());
         });
         viewer.addListener(ContactViewer.CloseEvent.class, e -> {
             log.info("Viewer close triggered");
@@ -73,15 +68,6 @@ public class ContactList extends VerticalLayout {
             grid.asSingleSelect().clear();
         });
 
-        addListener(ViewItemEvent.class, e -> {
-            log.info("View item triggered");
-            viewContact(e.getContact());
-        });
-
-        addListener(EditItemEvent.class, e -> {
-            log.info("Edit item triggered");
-            editContact(e.getContact());
-        });
 
         Div content = new Div(grid, viewer, editor);
         content.addClassName("content");
@@ -93,16 +79,21 @@ public class ContactList extends VerticalLayout {
         closeViewer();
     }
 
+    private void reselectContact(Contact contact) {
+        grid.asSingleSelect().clear();
+        grid.select(contact);
+    }
+
     private void deleteContact(ContactEditor.DeleteEvent evt) {
         contactService.delete(evt.getContact());
-        closeEditor();
         updateList();
+        closeEditor();
     }
 
     private void saveContact(ContactEditor.SaveEvent evt) {
         contactService.save(evt.getContact());
-        closeEditor();
         updateList();
+        closeEditor();
     }
 
     private HorizontalLayout getToolBar() {
@@ -134,8 +125,7 @@ public class ContactList extends VerticalLayout {
         }).setHeader("Company");
 
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
-
-        grid.asSingleSelect().addValueChangeListener(evt -> fireEvent(new ViewItemEvent(this, evt.getValue())));
+        grid.asSingleSelect().addValueChangeListener(evt -> viewContact(evt.getValue()));
     }
 
     private void viewContact(Contact contact) {
@@ -180,39 +170,5 @@ public class ContactList extends VerticalLayout {
     }
 
 
-    // Events
-    public static abstract class ContactListEvent extends ComponentEvent<ContactList> {
-        private Contact contact;
-
-        protected ContactListEvent(ContactList source, Contact contact) {
-            super(source, false);
-            this.contact = contact;
-        }
-
-        public Contact getContact() {
-            return contact;
-        }
-    }
-
-    public static class ViewItemEvent extends ContactListEvent {
-        private boolean ignoreFirst;
-        ViewItemEvent(ContactList source, Contact contact) {
-            super(source, contact);
-        }
-        ViewItemEvent(ContactList source, Contact contact, boolean ignoreFirst) {
-            super(source, contact);
-            this.ignoreFirst = ignoreFirst;
-        }
-
-        public boolean isIgnoreFirst() {
-            return ignoreFirst;
-        }
-    }
-
-    public static class EditItemEvent extends ContactListEvent {
-        EditItemEvent(ContactList source, Contact contact) {
-            super(source, contact);
-        }
-    }
 
 }

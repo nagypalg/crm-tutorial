@@ -84,15 +84,17 @@ public class ContactViewer extends FormLayout {
 //        edit.addClickShortcut(Key.ENTER).bindLifecycleTo(buttonsLayout);
 //        close.addClickShortcut(Key.ESCAPE).bindLifecycleTo(buttonsLayout);
 
-        Shortcuts.addShortcutListener(this,
-                () -> Notification.show("Well done viewer!"),
-                Key.KEY_G, KeyModifier.ALT);
+//        Shortcuts.addShortcutListener(this,
+//                () -> Notification.show("Well done viewer!"),
+//                Key.KEY_G, KeyModifier.ALT);
 
         Shortcuts.addShortcutListener(this,
                 () -> {
                     if (!ignoreFirstKeyEvent) {
-                        Notification.show("Enter in viewer");
+//                        Notification.show("Enter in viewer");
                         edit.click();
+                    } else {
+//                        Notification.show("Enter ignored in viewer");
                     }
                     ignoreFirstKeyEvent = false;
                 },
@@ -101,8 +103,10 @@ public class ContactViewer extends FormLayout {
         Shortcuts.addShortcutListener(this,
                 () -> {
                     if (!ignoreFirstKeyEvent) {
-                        Notification.show("Escape in viewer");
+//                        Notification.show("Escape in viewer");
                         close.click();
+                    } else {
+//                        Notification.show("Escape ignored in viewer");
                     }
                     ignoreFirstKeyEvent = false;
                 },
