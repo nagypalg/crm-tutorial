@@ -115,12 +115,12 @@ public class ContactList extends VerticalLayout {
     private void configureGrid() {
         grid.addClassName("item-grid");
         grid.setSizeFull();
-        grid.removeColumnByKey("company");
-        grid.setColumns("firstName", "lastName", "email", "status");
-        grid.addColumn(contact -> {
-            Company company = contact.getCompany();
-            return company == null ? "-" : company.getName();
-        }).setHeader("Company");
+//        grid.removeColumnByKey("company");
+        grid.setColumns("firstName", "lastName");
+//        grid.addColumn(contact -> {
+//            Company company = contact.getCompany();
+//            return company == null ? "-" : company.getName();
+//        }).setHeader("Company");
 
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.asSingleSelect().addValueChangeListener(evt -> viewContact(evt.getValue()));

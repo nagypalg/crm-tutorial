@@ -4,6 +4,7 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -18,12 +19,14 @@ import com.vaadin.tutorial.crm.backend.entity.Contact;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Locale;
 
 @Slf4j
 public class ContactEditor extends FormLayout {
 
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
+    DatePicker birthDate = new DatePicker("Birth date");
     EmailField email = new EmailField("Email");
     ComboBox<Contact.Status> status = new ComboBox<>("Status");
     ComboBox<Company> company = new ComboBox<>("Company");
@@ -43,9 +46,12 @@ public class ContactEditor extends FormLayout {
         company.setItems(companies);
         company.setItemLabelGenerator(Company::getName);
 
+        birthDate.setLocale(new Locale("hu"));
+
         add(
                 firstName,
                 lastName,
+                birthDate,
                 email,
                 status,
                 company,

@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -37,6 +38,9 @@ public class Contact extends AbstractEntity implements Cloneable {
     @NotNull
     @NotEmpty
     private String email = "";
+
+    @NotNull
+    private LocalDate birthDate;
 
     @Override
     public String toString() {

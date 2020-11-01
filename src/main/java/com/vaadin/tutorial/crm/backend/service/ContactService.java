@@ -7,6 +7,7 @@ import com.vaadin.tutorial.crm.backend.repository.ContactRepository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -84,6 +85,10 @@ public class ContactService {
                         contact.setStatus(Contact.Status.values()[r.nextInt(Contact.Status.values().length)]);
                         String email = (contact.getFirstName() + "." + contact.getLastName() + "@" + contact.getCompany().getName().replaceAll("[\\s-]", "") + ".com").toLowerCase();
                         contact.setEmail(email);
+                        int year = 1900 + r.nextInt(99);
+                        int month = r.nextInt(12) + 1;
+                        int day = r.nextInt(28) + 1;
+                        contact.setBirthDate(LocalDate.of(year, month, day));
                         return contact;
                     }).collect(Collectors.toList()));
         }

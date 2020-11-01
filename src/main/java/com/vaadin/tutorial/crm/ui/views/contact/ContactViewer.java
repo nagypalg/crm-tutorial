@@ -13,10 +13,13 @@ import com.vaadin.flow.shared.Registration;
 import com.vaadin.tutorial.crm.backend.entity.Company;
 import com.vaadin.tutorial.crm.backend.entity.Contact;
 
+import java.time.format.DateTimeFormatter;
+
 public class ContactViewer extends FormLayout {
 
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
+    TextField birthDate = new TextField("Birthdate");
     TextField email = new TextField("Email");
     TextField status = new TextField("Status");
     TextField company = new TextField("Company");
@@ -37,16 +40,20 @@ public class ContactViewer extends FormLayout {
 
         binder.forField(status).bind(c -> c.getStatus().name(), null);
 
+        binder.forField(birthDate).bind(c -> c.getBirthDate().format(DateTimeFormatter.ISO_DATE), null);
+
         binder.bindInstanceFields(this);
 
         firstName.setReadOnly(true);
         lastName.setReadOnly(true);
+        birthDate.setReadOnly(true);
         email.setReadOnly(true);
         status.setReadOnly(true);
 
         add(
                 firstName,
                 lastName,
+                birthDate,
                 email,
                 status,
                 company,
