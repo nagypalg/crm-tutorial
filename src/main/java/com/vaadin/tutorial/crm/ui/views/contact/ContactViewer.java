@@ -19,7 +19,7 @@ public class ContactViewer extends FormLayout {
 
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
-    TextField birthDate = new TextField("Birthdate");
+    TextField birthDate = new TextField("Birth date");
     TextField email = new TextField("Email");
     TextField status = new TextField("Status");
     TextField company = new TextField("Company");
