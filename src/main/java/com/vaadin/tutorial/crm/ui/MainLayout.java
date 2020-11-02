@@ -12,17 +12,16 @@ import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.tutorial.crm.ui.views.company.CompanyList;
-import com.vaadin.tutorial.crm.ui.views.dashboard.DashboardView;
 import com.vaadin.tutorial.crm.ui.views.contact.ContactList;
 
 @PWA(
-    name = "Vaadin CRM",
-    shortName = "CRM",
-    offlineResources = {
-        "./styles/offline.css",
-        "./images/offline.png"
-    },
-    enableInstallPrompt = false
+        name = "Vaadin CRM",
+        shortName = "CRM",
+        offlineResources = {
+                "./styles/offline.css",
+                "./images/offline.png"
+        },
+        enableInstallPrompt = false
 )
 @CssImport("./styles/shared-styles.css")
 public class MainLayout extends AppLayout {
@@ -55,7 +54,7 @@ public class MainLayout extends AppLayout {
         companiesLink.setHighlightCondition(HighlightConditions.sameLocation());
 
         addToDrawer(new VerticalLayout(
-            contactsLink, companiesLink
+                contactsLink, companiesLink
         ));
     }
 
