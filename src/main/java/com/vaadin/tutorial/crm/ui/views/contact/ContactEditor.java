@@ -3,6 +3,7 @@ package com.vaadin.tutorial.crm.ui.views.contact;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -14,6 +15,7 @@ import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
+import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.tutorial.crm.backend.entity.Company;
 import com.vaadin.tutorial.crm.backend.entity.Contact;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +29,7 @@ public class ContactEditor extends FormLayout {
 
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
-    SuperDatePicker birthDate = new SuperDatePicker("Birth date");
+    SuperDatePicker birthDate;
     EmailField email = new EmailField("Email");
     ComboBox<Contact.Status> status = new ComboBox<>("Status");
     ComboBox<Company> company = new ComboBox<>("Company");
@@ -40,6 +42,15 @@ public class ContactEditor extends FormLayout {
     private Contact contact;
 
     public ContactEditor(List<Company> companies) {
+        log.info("UI: {}", UI.getCurrent());
+
+        if (UI.getCurrent() == null) {
+            log.warn("Current UI null, initiating it (should only happen during testing)");
+            // needed for the date picker component
+            UI.setCurrent(new UI());
+        }
+
+        birthDate = new SuperDatePicker("Birth date");
         addClassName("item-form");
 
         binder.bindInstanceFields(this);

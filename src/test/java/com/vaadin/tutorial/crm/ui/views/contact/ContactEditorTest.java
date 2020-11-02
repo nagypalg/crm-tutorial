@@ -1,11 +1,13 @@
 package com.vaadin.tutorial.crm.ui.views.contact;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.tutorial.crm.backend.entity.Company;
 import com.vaadin.tutorial.crm.backend.entity.Contact;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -17,7 +19,7 @@ public class ContactEditorTest {
     private Company company2;
 
     @Before
-    public void setupData() {
+    public void setupData() throws InterruptedException {
         companies = new ArrayList<>();
         company1 = new Company("Vaadin Ltd");
         company2 = new Company("IT Mill");
@@ -30,6 +32,7 @@ public class ContactEditorTest {
         marcUsher.setEmail("marc@usher.com");
         marcUsher.setStatus(Contact.Status.NotContacted);
         marcUsher.setCompany(company2);
+        marcUsher.setBirthDate(LocalDate.now());
     }
 
     @Test
@@ -54,6 +57,7 @@ public class ContactEditorTest {
             form.company.setValue(company1);
             form.email.setValue("john@doe.com");
             form.status.setValue(Contact.Status.Customer);
+            form.birthDate.setValue(LocalDate.now());
 
             AtomicReference<Contact> savedContactRef = new AtomicReference<>(null);
             form.addListener(ContactEditor.SaveEvent.class, e -> {

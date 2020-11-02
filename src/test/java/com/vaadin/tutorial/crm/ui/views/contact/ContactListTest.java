@@ -1,9 +1,12 @@
 package com.vaadin.tutorial.crm.ui.views.contact;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.tutorial.crm.backend.entity.Contact;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class ContactListTest {
 
+    static {
+        // needed for the date picker component
+        UI.setCurrent(new UI());
+    }
+
     @Autowired
     private ContactList listView;
 
@@ -22,7 +30,7 @@ public class ContactListTest {
             Grid<Contact> grid = listView.grid;
             Contact firstContact = getFirstItem(grid);
 
-            ContactEditor form = listView.editor;
+            ContactViewer form = listView.viewer;
 
             Assert.assertFalse(form.isVisible());
     		grid.asSingleSelect().setValue(firstContact);
