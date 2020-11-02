@@ -1,12 +1,12 @@
 package com.vaadin.tutorial.crm.ui.views.contact;
 
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -17,16 +17,17 @@ import com.vaadin.flow.shared.Registration;
 import com.vaadin.tutorial.crm.backend.entity.Company;
 import com.vaadin.tutorial.crm.backend.entity.Contact;
 import lombok.extern.slf4j.Slf4j;
+import org.vaadin.miki.shared.dates.DatePatterns;
+import org.vaadin.miki.superfields.dates.SuperDatePicker;
 
 import java.util.List;
-import java.util.Locale;
 
 @Slf4j
 public class ContactEditor extends FormLayout {
 
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
-    DatePicker birthDate = new DatePicker("Birth date");
+    SuperDatePicker birthDate = new SuperDatePicker("Birth date");
     EmailField email = new EmailField("Email");
     ComboBox<Contact.Status> status = new ComboBox<>("Status");
     ComboBox<Company> company = new ComboBox<>("Company");
@@ -46,7 +47,7 @@ public class ContactEditor extends FormLayout {
         company.setItems(companies);
         company.setItemLabelGenerator(Company::getName);
 
-        birthDate.setLocale(new Locale("hu"));
+        birthDate.setDatePattern(DatePatterns.YYYY_MM_DD);
 
         add(
                 firstName,

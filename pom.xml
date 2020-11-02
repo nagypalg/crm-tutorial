@@ -179,6 +179,12 @@
             <version>6.1.6.Final</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.vaadin.miki</groupId>
+            <artifactId>superfields</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
 
     </dependencies>
 
